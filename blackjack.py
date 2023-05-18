@@ -142,3 +142,72 @@ def push(player, dealer):
     print('It\'s a tie! Push!')
 
 #============================================================== Game ==============================================================#
+
+# Set up the Player's chips
+player_chips = Chips()
+    
+while True:
+    # Print an opening statement
+    print('Let\'s play blackjack!!')
+    print(f"\nYou have {player_chips.total} chips")
+    # Create & shuffle the deck, deal two cards to each player
+    deck = Deck()
+    deck.shuffle()
+    
+    player = Hand()
+    player.add_card(deck.deal())
+    player.add_card(deck.deal())
+    
+    dealer = Hand()
+    dealer.add_card(deck.deal())
+    dealer.add_card(deck.deal())
+    
+    # Prompt the Player for their bet
+    take_bet(player_chips)
+    
+    # Show cards (but keep one dealer card hidden)
+    show_some(player, dealer)
+    
+    
+    while playing:  # recall this variable from our hit_or_stand function
+        
+        # Prompt for Player to Hit or Stand
+        hit_or_stand(deck, player)
+        
+        # Show cards (but keep one dealer card hidden)
+        show_some(player, dealer)
+        
+        # If player's hand exceeds 21, run player_busts() and break out of loop
+        if player.value > 21:
+            player_busts(player, dealer, player_chips)
+            break
+
+    # If Player hasn't busted, play Dealer's hand until Dealer reaches 17
+    if player.value <= 21:
+        
+        while dealer.value < 17:
+            hit(deck, dealer)
+    
+        # Show all cards
+        show_all(player, dealer,)
+        # Run different winning scenarios
+        if dealer.value > 21:
+            dealer_busts(player, dealer, player_chips)
+        elif dealer.value > player.value:
+            dealer_wins(player,dealer,player_chips)
+        elif player.value > dealer.value:
+            player_wins(player,dealer,player_chips)
+        else:
+            push(player, dealer)
+    
+    # Inform Player of their chips total 
+    print(f'Player now has {player_chips.total}!')
+    # Ask to play again
+    replay = input('Do you want to play again? \'y\' or \'n\': ')
+        
+    if replay[0].lower() == 'y':
+        playing = True
+        continue
+    else:
+        print('Thank you for playing!')
+        break
