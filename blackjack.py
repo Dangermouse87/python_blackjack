@@ -1,6 +1,13 @@
 import random
 
+suits = ('Hearts', 'Diamonds', 'Spades', 'Clubs')
+ranks = ('Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Jack', 'Queen', 'King', 'Ace')
+values = {'Two':2, 'Three':3, 'Four':4, 'Five':5, 'Six':6, 'Seven':7, 'Eight':8, 'Nine':9, 'Ten':10, 'Jack':10,
+        'Queen':10, 'King':10, 'Ace':11}
+
 playing = True
+
+#============================================================== Classes ==============================================================#
 
 class Card:
     def __init__(self,suit,rank):
@@ -59,3 +66,79 @@ class Chips:
     
     def lose_bet(self):
         self.total -= self.bet
+
+#============================================================== Methods ==============================================================#
+
+def take_bet(chips):
+    while True:
+        
+        try:
+            chips.bet = int(input(f"How much would you like to bet? "))
+        except ValueError:
+            print("That isn't a number, please try again")
+        else:
+            if chips.bet > chips.total:
+                print('You don\'t have enough chips! You have: {}'.format(chips.total))
+            else:
+                break
+
+def hit(deck,hand):
+    hand.add_card(deck.deal())
+    hand.ace_count()
+
+def hit_or_stand(deck,hand):
+    global playing
+    
+    while True:
+        ask = input(f'Player has {hand.value}\nHit or Stand? Please enter \'h\' or \'s\': ')
+        if ask[0].lower() == 'h':
+            hit(deck,hand)
+        elif ask[0].lower() == 's':
+            print('\nPlayer stands!\nIt\'s the Dealer\'s Turn!')
+            playing = False
+        else:
+            print('Sorry! Please Try Again! Enter \'h\' for hit, or \'s\' for stand')
+            continue
+        break
+
+def show_some(player,dealer):
+    print("\nDealer's hand:")
+    print("\nFirst card hidden")
+    print(dealer.cards[1])
+    
+    print("\nPlayer's hand:\n")
+    for card in player.cards:
+        print(card)
+    
+def show_all(player,dealer):
+    print("Dealer's hand:\n")
+    for card in dealer.cards:
+        print(card)
+    print(f"\nDealer's has {dealer.value}")
+    
+    print("\nPlayer's hand:\n")
+    for card in player.cards:
+        print(card)
+    print(f"\nPlayer's has {player.value}")
+
+def player_busts(player, dealer, chips):
+    print(f'Player BUST! Dealer wins')
+    chips.lose_bet()
+
+def player_wins(player, dealer, chips):
+    print(f'Player wins!')
+    chips.win_bet()
+
+def dealer_busts(player, dealer, chips):
+    player.value > 21
+    print(f'Dealer BUST! Player wins')
+    chips.win_bet()
+    
+def dealer_wins(player, dealer, chips):
+    print(f'Dealer wins!')
+    chips.lose_bet()
+    
+def push(player, dealer):
+    print('It\'s a tie! Push!')
+
+#============================================================== Game ==============================================================#
